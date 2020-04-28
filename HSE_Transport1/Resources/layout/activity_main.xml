@@ -1,0 +1,44 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+     <android.support.v7.widget.Toolbar
+        android:id="@+id/busesToolbar"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.DarkAppBar"
+        android:layout_height="?android:attr/actionBarSize"/>
+
+     <fr.ganfra.materialspinner.MaterialSpinner
+         app:ms_enableFloatingLabel="true"
+         app:ms_hint="Направление автобусов"
+         app:ms_floatingLabelText="Направление"
+         android:id="@+id/routeSpinner"
+         android:layout_weight="0"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/busesRecyclerView"
+        android:background="#e2e2e2"
+        android:scrollbars="vertical"
+        android:layout_weight="0.8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+     <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+        <include
+           layout="@layout/menu"/>
+
+    </LinearLayout>
+
+</LinearLayout>

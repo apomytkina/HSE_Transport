@@ -1,0 +1,55 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tableToolbar"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.DarkAppBar"
+        android:layout_height="?android:attr/actionBarSize"/>
+
+    <fr.ganfra.materialspinner.MaterialSpinner
+        app:ms_enableFloatingLabel="true"
+        app:ms_hint="Выберите День Недели"
+        app:ms_floatingLabelText="День Недели"
+        android:id="@+id/daySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:layout_weight="90"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+             <ListView
+                android:layout_weight="0.5"
+                android:id="@+id/scheduleListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+     <TextView
+            android:id="@+id/noteTextView"
+            android:layout_gravity="center"
+            android:text="** - автобусы до/от ст. метро Славянский бульвар"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+        <include
+           layout="@layout/menu"/>
+
+    </LinearLayout>
+
+</LinearLayout>
