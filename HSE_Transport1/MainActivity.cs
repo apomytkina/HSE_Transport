@@ -152,37 +152,6 @@ namespace HSE_Transport1
 
             Android.Support.V7.App.AlertDialog.Builder NotificationAlert = new Android.Support.V7.App.AlertDialog.Builder(this);
 
-            //if (!notificationBuses.Contains(bus))
-            //{
-            //    NotificationAlert.SetMessage("Напомнить про автобус за 10 минут до его отправления");
-            //    NotificationAlert.SetTitle("Поставить уведомление");
-
-            //    NotificationAlert.SetPositiveButton("Ok", (alert, args) =>
-            //    {
-            //        StartAlarm(bus.DepartureTime, departurePlace);
-            //    });
-
-            //    NotificationAlert.SetNegativeButton("Cancel", (alert, args) =>
-            //    {
-            //        NotificationAlert.Dispose();
-            //    });
-            //}
-            //else
-            //{
-            //    NotificationAlert.SetMessage("Напоминание будет отменено");
-            //    NotificationAlert.SetTitle("Сбросить уведомление");
-
-            //    NotificationAlert.SetPositiveButton("Ok", (alert, args) =>
-            //    {
-            //        notificationBuses.Remove(bus);
-            //    });
-
-            //    NotificationAlert.SetNegativeButton("Cancel", (alert, args) =>
-            //    {
-            //        NotificationAlert.Dispose();
-            //    });
-            //}
-
             NotificationAlert.SetMessage("Напомнить про автобус за 10 минут до его отправления");
             NotificationAlert.SetTitle("Поставить уведомление");
 
