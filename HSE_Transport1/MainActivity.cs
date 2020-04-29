@@ -23,6 +23,8 @@ namespace HSE_Transport1
     [Activity(Label = "Ближайшие автобусы", Theme = "@style/AppTheme", MainLauncher = false, Icon = "@mipmap/ic_launcher")]
     public class MainActivity : AppCompatActivity
     {
+        readonly string[] permissionsGroup = { };
+
         List<Bus> notificationBuses;
 
         public const int NOTI_SECONDARY1 = 1200;
@@ -60,6 +62,8 @@ namespace HSE_Transport1
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
+
+            //RequestPermissions(permissionsGroup, 0);
 
             notificationBuses = new List<Bus>();
 
@@ -219,7 +223,7 @@ namespace HSE_Transport1
 
                     if (DateTime.TryParse(dataLine[0], out departureTime)
                         && RightDirection(dataLine[1], dataLine[2])
-                        && RightDuration(dataLine[3])
+                        /*&& RightDuration(dataLine[3])*/
                         && (dataLine[4] == "extra-low"
                         || dataLine[4] == "low"
                         || dataLine[4] == "medium"
@@ -235,7 +239,7 @@ namespace HSE_Transport1
                             DepartureTime = departureTime,
                             DeparturePlace = dataLine[1],
                             ArrivalPlace = dataLine[2],
-                            JourneyDuration = int.Parse(dataLine[3]),
+                            JourneyDuration = 0,
                             Occupancy = dataLine[4],
                             Notify = bool.Parse(dataLine[5]),
                             Day = dataLine[6]

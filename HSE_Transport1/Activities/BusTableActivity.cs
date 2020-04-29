@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Gms.Maps.Model;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
@@ -15,13 +16,22 @@ using Android.Widget;
 using FR.Ganfra.Materialspinner;
 using HSE_Transport1.Adapters;
 using HSE_Transport1.DataModels;
+using HSE_Transport1.Helpers;
 using Microsoft.AspNetCore.JsonPatch.Internal;
+using Newtonsoft.Json;
 
 namespace HSE_Transport1.Activities
 {
     [Activity(Label = "BusTableActivity", Theme = "@style/AppTheme", MainLauncher = false)]
     public class BusTableActivity : AppCompatActivity
     {
+        static Dictionary<string, LatLng> latlngPairs;
+
+        LatLng dubkiPosition;
+        LatLng odintosovoPosition;
+        LatLng slavyanskiPosition;
+
+        MapHelper mapHepler = new MapHelper();
         //LinearLayout noteLayout;
         TextView noteTextView;
 
@@ -61,6 +71,16 @@ namespace HSE_Transport1.Activities
 
             SetContentView(Resource.Layout.bus_table);
 
+            slavyanskiPosition = new LatLng(55.728246, 37.473204);
+            odintosovoPosition = new LatLng(55.672067, 37.279666);
+            dubkiPosition = new LatLng(55.660864, 37.226496);
+
+            latlngPairs = new Dictionary<string, LatLng>();
+
+            latlngPairs.Add("Dubki", dubkiPosition);
+            latlngPairs.Add("Odintsovo", odintosovoPosition);
+            latlngPairs.Add("Slavyanski", slavyanskiPosition);
+
             //noteLayout = (LinearLayout)FindViewById(Resource.Id.noteLayout);
             noteTextView = (TextView)FindViewById(Resource.Id.noteTextView);
             scheduleListView = (ListView)FindViewById(Resource.Id.scheduleListView);
@@ -82,7 +102,7 @@ namespace HSE_Transport1.Activities
             notficationLayout.Click += NotficationLayout_Click;
             scheduleLayout.Click += ScheduleLayout_Click;
 
-            ParseData();
+            ParseDataAsync();
             SortBuses();
 
             SetUpToolbar();
@@ -190,7 +210,7 @@ namespace HSE_Transport1.Activities
             SupportActionBar.Title = "Расписание автобусов";
         }
 
-        void ParseData()
+        async Task ParseDataAsync()
         {
             buses = new List<Bus>();
             using (StreamReader sr = new StreamReader(Assets.Open("bus_info.csv")))
@@ -206,7 +226,7 @@ namespace HSE_Transport1.Activities
 
                     if (DateTime.TryParse(dataLine[0], out departureTime)
                         && RightDirection(dataLine[1], dataLine[2])
-                        && RightDuration(dataLine[3])
+                        /*&& RightDuration(dataLine[3])*/
                         && (dataLine[4] == "extra-low"
                         || dataLine[4] == "low"
                         || dataLine[4] == "medium"
@@ -222,7 +242,7 @@ namespace HSE_Transport1.Activities
                             DepartureTime = departureTime,
                             DeparturePlace = dataLine[1],
                             ArrivalPlace = dataLine[2],
-                            JourneyDuration = int.Parse(dataLine[3]),
+                            JourneyDuration = await GetDirectionAsync(latlngPairs[dataLine[1]], latlngPairs[dataLine[2]]),
                             Occupancy = dataLine[4],
                             Notify = bool.Parse(dataLine[5]),
                             Day = dataLine[6]
@@ -301,6 +321,19 @@ namespace HSE_Transport1.Activities
             departureBuses.Insert(0, new Bus { DeparturePlace = "Дубки" });
 
             scheduleListView.Adapter = new ScheduleAdapter(this, departureBuses, arrivalBuses);
+        }
+
+        async Task<double> GetDirectionAsync(LatLng location, LatLng destLocation)
+        {
+            string key = Resources.GetString(Resource.String.mapkey);
+
+            string directionJson = await mapHepler.GetDirectionJsonAsync(location, destLocation, key);
+
+            var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
+
+            double durationString = directionData.routes[0].legs[0].duration.value;
+
+            return durationString;
         }
     }
 }
