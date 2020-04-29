@@ -46,26 +46,26 @@ namespace HSE_Transport1.Adapters
                 holder.okImageView.Visibility = ViewStates.Visible;
             }
 
-            if (bus.JourneyDuration < 7)
-            {
-                holder.journeyDurationTextView.SetTextColor(Color.DarkGreen);
-            }
-            if (bus.JourneyDuration >= 7 && bus.JourneyDuration <= 10)
-            {
-                holder.journeyDurationTextView.SetTextColor(Color.LightGreen);
-            }
-            if (bus.JourneyDuration > 10 && bus.JourneyDuration <= 15)
-            {
-                holder.journeyDurationTextView.SetTextColor(Color.Gold);
-            }
-            if (bus.JourneyDuration > 15 && bus.JourneyDuration <= 20)
-            {
-                holder.journeyDurationTextView.SetTextColor(Color.Orange);
-            }
-            if (bus.JourneyDuration > 20)
-            {
-                holder.journeyDurationTextView.SetTextColor(Color.Red);
-            }
+            //if (bus.JourneyDuration < 7)
+            //{
+            //    holder.journeyDurationTextView.SetTextColor(Color.DarkGreen);
+            //}
+            //if (bus.JourneyDuration >= 7 && bus.JourneyDuration <= 10)
+            //{
+            //    holder.journeyDurationTextView.SetTextColor(Color.LightGreen);
+            //}
+            //if (bus.JourneyDuration > 10 && bus.JourneyDuration <= 15)
+            //{
+            //    holder.journeyDurationTextView.SetTextColor(Color.Gold);
+            //}
+            //if (bus.JourneyDuration > 15 && bus.JourneyDuration <= 20)
+            //{
+            //    holder.journeyDurationTextView.SetTextColor(Color.Orange);
+            //}
+            //if (bus.JourneyDuration > 20)
+            //{
+            //    holder.journeyDurationTextView.SetTextColor(Color.Red);
+            //}
 
             if (bus.Occupancy == "extra-low")
             {
@@ -89,7 +89,7 @@ namespace HSE_Transport1.Adapters
             }
 
             holder.timeTextView.Text = bus.DepartureTime.ToString("HH:mm");
-            holder.journeyDurationTextView.Text = bus.JourneyDuration.ToString() + "мин";
+            //holder.journeyDurationTextView.Text = bus.JourneyDuration.ToString() + "мин";
         }
 
         public override int ItemCount => BusesList.Count;

@@ -17,14 +17,29 @@ using Android.Graphics;
 using HSE_Transport1.DataModels;
 using Java.Util;
 using Android.Media;
+using System.Threading.Tasks;
+using Android.Gms.Maps.Model;
+using HSE_Transport1.Helpers;
+using Newtonsoft.Json;
 
 namespace HSE_Transport1
 {
     [Activity(Label = "Ближайшие автобусы", Theme = "@style/AppTheme", MainLauncher = false, Icon = "@mipmap/ic_launcher")]
     public class MainActivity : AppCompatActivity
     {
+        static Dictionary<string, LatLng> latlngPairs;
+
+        LatLng dubkiPosition;
+        LatLng odintosovoPosition;
+        LatLng slavyanskiPosition;
+
+        
+
         readonly string[] permissionsGroup = { };
 
+        TextView durationTextView;
+
+        MapHelper mapHepler = new MapHelper();
         List<Bus> notificationBuses;
 
         public const int NOTI_SECONDARY1 = 1200;
@@ -63,8 +78,19 @@ namespace HSE_Transport1
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
+            slavyanskiPosition = new LatLng(55.728246, 37.473204);
+            odintosovoPosition = new LatLng(55.672067, 37.279666);
+            dubkiPosition = new LatLng(55.660864, 37.226496);
+
+            latlngPairs = new Dictionary<string, LatLng>();
+
+            latlngPairs.Add("Dubki", dubkiPosition);
+            latlngPairs.Add("Odintsovo", odintosovoPosition);
+            latlngPairs.Add("Slavyanski", slavyanskiPosition);
+
             //RequestPermissions(permissionsGroup, 0);
 
+            durationTextView = (TextView)FindViewById(Resource.Id.durationTextView);
             notificationBuses = new List<Bus>();
 
             routeSpinner = (MaterialSpinner)FindViewById(Resource.Id.routeSpinner);
@@ -80,7 +106,7 @@ namespace HSE_Transport1
             mapButton = (ImageButton)FindViewById(Resource.Id.mapButton);
 
             scheduleButton.Click += ScheduleButton_Click;
-            //notificationButton.Click += NotificationButton_Click;
+            notificationButton.Click += NotificationButton_Click;
 
             notficationLayout.Click += NotficationLayout_Click;
             scheduleLayout.Click += ScheduleLayout_Click;
@@ -90,7 +116,7 @@ namespace HSE_Transport1
 
             SetUpToolbars();
             SetUpSpinner();
-            SetUpRecyclerView();
+            SetUpRecyclerViewAsync();
         }
 
         private void NotificationButton_Click(object sender, EventArgs e)
@@ -127,12 +153,13 @@ namespace HSE_Transport1
             Finish();
         }
 
-        void SetUpRecyclerView()
+        async Task SetUpRecyclerViewAsync()
         {
             busesRecyclerView.SetLayoutManager(new LinearLayoutManager(busesRecyclerView.Context));
             busesAdapter = new BusAdapter(listOfBuses);
             busesAdapter.NotificationClick += BusesAdapter_NotificationClick;
             busesRecyclerView.SetAdapter(busesAdapter);
+            await GetDirectionAsync(latlngPairs[listOfBuses[0].DeparturePlace], latlngPairs[listOfBuses[0].ArrivalPlace]);
         }
 
         private void BusesAdapter_NotificationClick(object sender, BusAdapterClickEventArgs e)
@@ -202,7 +229,7 @@ namespace HSE_Transport1
                 Console.WriteLine(selectedRoute);
                 listOfBuses = routes[selectedRoute];
 
-                SetUpRecyclerView();
+                SetUpRecyclerViewAsync();
             }
         }
 
@@ -239,7 +266,6 @@ namespace HSE_Transport1
                             DepartureTime = departureTime,
                             DeparturePlace = dataLine[1],
                             ArrivalPlace = dataLine[2],
-                            JourneyDuration = 0,
                             Occupancy = dataLine[4],
                             Notify = bool.Parse(dataLine[5]),
                             Day = dataLine[6]
@@ -387,6 +413,19 @@ namespace HSE_Transport1
                     StartAlarm(bus.DepartureTime, bus.DeparturePlace);
                 }
             }
+        }
+
+        async Task GetDirectionAsync(LatLng location, LatLng destLocation)
+        {
+            string key = Resources.GetString(Resource.String.mapkey);
+
+            string directionJson = await mapHepler.GetDirectionJsonAsync(location, destLocation, key);
+
+            var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
+
+            string durationString = directionData.routes[0].legs[0].duration.text;
+
+            durationTextView.Text += durationString;
         }
     }
 }

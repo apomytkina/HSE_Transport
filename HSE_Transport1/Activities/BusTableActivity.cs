@@ -25,13 +25,6 @@ namespace HSE_Transport1.Activities
     [Activity(Label = "BusTableActivity", Theme = "@style/AppTheme", MainLauncher = false)]
     public class BusTableActivity : AppCompatActivity
     {
-        static Dictionary<string, LatLng> latlngPairs;
-
-        LatLng dubkiPosition;
-        LatLng odintosovoPosition;
-        LatLng slavyanskiPosition;
-
-        MapHelper mapHepler = new MapHelper();
         //LinearLayout noteLayout;
         TextView noteTextView;
 
@@ -71,16 +64,6 @@ namespace HSE_Transport1.Activities
 
             SetContentView(Resource.Layout.bus_table);
 
-            slavyanskiPosition = new LatLng(55.728246, 37.473204);
-            odintosovoPosition = new LatLng(55.672067, 37.279666);
-            dubkiPosition = new LatLng(55.660864, 37.226496);
-
-            latlngPairs = new Dictionary<string, LatLng>();
-
-            latlngPairs.Add("Dubki", dubkiPosition);
-            latlngPairs.Add("Odintsovo", odintosovoPosition);
-            latlngPairs.Add("Slavyanski", slavyanskiPosition);
-
             //noteLayout = (LinearLayout)FindViewById(Resource.Id.noteLayout);
             noteTextView = (TextView)FindViewById(Resource.Id.noteTextView);
             scheduleListView = (ListView)FindViewById(Resource.Id.scheduleListView);
@@ -102,7 +85,7 @@ namespace HSE_Transport1.Activities
             notficationLayout.Click += NotficationLayout_Click;
             scheduleLayout.Click += ScheduleLayout_Click;
 
-            ParseDataAsync();
+            ParseData();
             SortBuses();
 
             SetUpToolbar();
@@ -210,7 +193,7 @@ namespace HSE_Transport1.Activities
             SupportActionBar.Title = "Расписание автобусов";
         }
 
-        async Task ParseDataAsync()
+        async void ParseData()
         {
             buses = new List<Bus>();
             using (StreamReader sr = new StreamReader(Assets.Open("bus_info.csv")))
@@ -242,7 +225,7 @@ namespace HSE_Transport1.Activities
                             DepartureTime = departureTime,
                             DeparturePlace = dataLine[1],
                             ArrivalPlace = dataLine[2],
-                            JourneyDuration = await GetDirectionAsync(latlngPairs[dataLine[1]], latlngPairs[dataLine[2]]),
+                            //JourneyDuration = await GetDirectionAsync(latlngPairs[dataLine[1]], latlngPairs[dataLine[2]]),
                             Occupancy = dataLine[4],
                             Notify = bool.Parse(dataLine[5]),
                             Day = dataLine[6]
@@ -321,19 +304,6 @@ namespace HSE_Transport1.Activities
             departureBuses.Insert(0, new Bus { DeparturePlace = "Дубки" });
 
             scheduleListView.Adapter = new ScheduleAdapter(this, departureBuses, arrivalBuses);
-        }
-
-        async Task<double> GetDirectionAsync(LatLng location, LatLng destLocation)
-        {
-            string key = Resources.GetString(Resource.String.mapkey);
-
-            string directionJson = await mapHepler.GetDirectionJsonAsync(location, destLocation, key);
-
-            var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
-
-            double durationString = directionData.routes[0].legs[0].duration.value;
-
-            return durationString;
         }
     }
 }
