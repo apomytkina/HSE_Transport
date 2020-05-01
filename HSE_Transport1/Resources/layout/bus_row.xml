@@ -14,17 +14,8 @@
 
         <RelativeLayout
             android:background="@drawable/curvededges"
-            android:layout_width="78dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent">
-
-            <ImageView
-                android:visibility="invisible"
-                android:id="@+id/okImageView"
-                android:layout_marginTop="7dp"
-                android:layout_marginLeft="7dp"
-                android:src="@drawable/ok"
-                android:layout_width="17dp"
-                android:layout_height="17dp"/>
 
             <TextView
                 android:id="@+id/timeTextView"
@@ -40,7 +31,7 @@
 
         <RelativeLayout
             android:background="@drawable/curvededges"
-            android:layout_width="147dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <TextView
@@ -60,58 +51,10 @@
                 android:layout_below="@+id/loadTextView"
                 android:layout_centerInParent="true"
                 android:background="@drawable/roundbutton"
-                android:layout_width="120dp"
+                android:layout_width="180dp"
                 android:layout_height="34dp"/>
 
         </RelativeLayout>
-
-        <RelativeLayout
-            android:background="@drawable/curvededges"
-            android:layout_width="146dp"
-            android:layout_height="match_parent">
-
-             <TextView
-                android:id="@+id/journeyTimeTextView"
-                android:layout_marginTop="5dp"
-                android:textStyle="bold"
-                android:textColor="@color/blueTextColor"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:text="Время в пути:"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:layout_marginVertical="15dp"
-                android:layout_below="@+id/journeyTimeTextView"
-                android:id="@+id/journeyDurationTextView"
-                android:layout_marginTop="5dp"
-                android:textStyle="bold"
-                android:textColor="@color/colorYellow"
-                android:textSize="16sp"
-                android:gravity="center_horizontal"
-                android:text="12 мин"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:background="@drawable/curvededges"
-        android:id="@+id/setNotificationLayout"
-        android:layout_width="match_parent"
-        android:layout_height="33dp">
-
-        <TextView
-            android:gravity="center"
-            android:textColor="@color/blueTextColor"
-            android:textStyle="bold"
-            android:text="Поставить уведомление"
-            android:textSize="16sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

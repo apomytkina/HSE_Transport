@@ -68,7 +68,6 @@
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Adapters\BusAdapter.cs" />
     <Compile Include="Adapters\ScheduleAdapter.cs" />
-    <Compile Include="DataModels\AlarmNotificationReceiver.cs" />
     <Compile Include="DataModels\Bus.cs" />
     <Compile Include="Helpers\DirectionParser.cs" />
     <Compile Include="Helpers\MapHelper.cs" />
@@ -192,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\mipmap-mdpi\mipmap-mdpi\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\background.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

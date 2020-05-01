@@ -14,13 +14,13 @@ using Android.Content;
 using HSE_Transport1.Activities;
 using Android.Support.V4.App;
 using Android.Graphics;
-using HSE_Transport1.DataModels;
 using Java.Util;
 using Android.Media;
 using System.Threading.Tasks;
 using Android.Gms.Maps.Model;
 using HSE_Transport1.Helpers;
 using Newtonsoft.Json;
+using static Android.Manifest;
 
 namespace HSE_Transport1
 {
@@ -33,9 +33,7 @@ namespace HSE_Transport1
         LatLng odintosovoPosition;
         LatLng slavyanskiPosition;
 
-        
-
-        readonly string[] permissionsGroup = { };
+        readonly string[] permissionsGroup = { Permission.Internet };
 
         TextView durationTextView;
 
@@ -88,7 +86,7 @@ namespace HSE_Transport1
             latlngPairs.Add("Odintsovo", odintosovoPosition);
             latlngPairs.Add("Slavyanski", slavyanskiPosition);
 
-            //RequestPermissions(permissionsGroup, 0);
+            RequestPermissions(permissionsGroup, 0);
 
             durationTextView = (TextView)FindViewById(Resource.Id.durationTextView);
             notificationBuses = new List<Bus>();
@@ -157,48 +155,9 @@ namespace HSE_Transport1
         {
             busesRecyclerView.SetLayoutManager(new LinearLayoutManager(busesRecyclerView.Context));
             busesAdapter = new BusAdapter(listOfBuses);
-            busesAdapter.NotificationClick += BusesAdapter_NotificationClick;
             busesRecyclerView.SetAdapter(busesAdapter);
             await GetDirectionAsync(latlngPairs[listOfBuses[0].DeparturePlace], latlngPairs[listOfBuses[0].ArrivalPlace]);
         }
-
-        private void BusesAdapter_NotificationClick(object sender, BusAdapterClickEventArgs e)
-        {
-            var bus = listOfBuses[e.Position];
-
-            string departurePlace;
-
-            if (bus.DeparturePlace == "Dubki")
-            {
-                departurePlace = "Дубки";
-            }
-            else if(bus.DeparturePlace == "Odintsovo")
-            {
-                departurePlace = "Одинцово";
-            }
-            else
-            {
-                departurePlace = "Славянский бульвар";
-            }
-
-            Android.Support.V7.App.AlertDialog.Builder NotificationAlert = new Android.Support.V7.App.AlertDialog.Builder(this);
-
-            NotificationAlert.SetMessage("Напомнить про автобус за 10 минут до его отправления");
-            NotificationAlert.SetTitle("Поставить уведомление");
-
-            NotificationAlert.SetPositiveButton("Ok", (alert, args) =>
-            {
-                StartAlarm(bus.DepartureTime, departurePlace);
-            });
-
-            NotificationAlert.SetNegativeButton("Cancel", (alert, args) =>
-            {
-                NotificationAlert.Dispose();
-            });
-
-            NotificationAlert.Show();
-        }
-
         void SetUpSpinner()
         {
             routes = new Dictionary<string, List<Bus>>();
@@ -370,49 +329,10 @@ namespace HSE_Transport1
                 || (departure == "Slavyanski" && arrival == "Dubki");
         }
 
-        static bool RightDuration(string str)
-        {
-            int duration;
-            return int.TryParse(str, out duration) && duration > 0;
-        }
-
         void SetUpToolbars()
         {
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Ближайшие автобусы сегодня";
-        }
-
-        void StartAlarm(DateTime time, string departurePlace)
-        {
-            var alarmIntent = new Intent(this, typeof(AlarmReceiver));
-            alarmIntent.PutExtra("title", "Напоминание");
-            alarmIntent.PutExtra("message", $"Автобус от станции {departurePlace} отправится в {time.ToString("HH:mm")}.");
-
-            var pending = PendingIntent.GetBroadcast(this, 0, alarmIntent, PendingIntentFlags.UpdateCurrent);
-
-            var alarmManager = GetSystemService(AlarmService).JavaCast<AlarmManager>();
-
-            if (time.Ticks - DateTime.Now.AddMinutes(10).Ticks < 0 && time.Ticks - DateTime.Now.Ticks >= 0)
-            {
-                alarmManager.Set(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime(), pending);
-            }
-            else if (time.Ticks - DateTime.Now.AddMinutes(10).Ticks > 0)
-            {
-                long miliseconds = (time.Ticks - DateTime.Now.AddMinutes(10).Ticks) / 10000;
-                alarmManager.Set(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime() + miliseconds, pending);
-                //alarmManager.Cancel(pending);
-            }
-        }
-
-        void SetNotifications()
-        {
-            if (notificationBuses.Count != 0)
-            {
-                foreach (Bus bus in notificationBuses)
-                {
-                    StartAlarm(bus.DepartureTime, bus.DeparturePlace);
-                }
-            }
         }
 
         async Task GetDirectionAsync(LatLng location, LatLng destLocation)
@@ -423,9 +343,9 @@ namespace HSE_Transport1
 
             var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
 
-            string durationString = directionData.routes[0].legs[0].duration.text;
+            double durationString = directionData.routes[0].legs[0].duration.value / 60;
 
-            durationTextView.Text += durationString;
+            durationTextView.Text = "Время в пути по данному маршруту: " + durationString + " мин";
         }
     }
 }

@@ -15,7 +15,6 @@ using Android.Views;
 using Android.Widget;
 using FR.Ganfra.Materialspinner;
 using HSE_Transport1.Adapters;
-using HSE_Transport1.DataModels;
 using HSE_Transport1.Helpers;
 using Microsoft.AspNetCore.JsonPatch.Internal;
 using Newtonsoft.Json;
@@ -193,7 +192,7 @@ namespace HSE_Transport1.Activities
             SupportActionBar.Title = "Расписание автобусов";
         }
 
-        async void ParseData()
+        void ParseData()
         {
             buses = new List<Bus>();
             using (StreamReader sr = new StreamReader(Assets.Open("bus_info.csv")))
@@ -209,7 +208,6 @@ namespace HSE_Transport1.Activities
 
                     if (DateTime.TryParse(dataLine[0], out departureTime)
                         && RightDirection(dataLine[1], dataLine[2])
-                        /*&& RightDuration(dataLine[3])*/
                         && (dataLine[4] == "extra-low"
                         || dataLine[4] == "low"
                         || dataLine[4] == "medium"
@@ -225,7 +223,6 @@ namespace HSE_Transport1.Activities
                             DepartureTime = departureTime,
                             DeparturePlace = dataLine[1],
                             ArrivalPlace = dataLine[2],
-                            //JourneyDuration = await GetDirectionAsync(latlngPairs[dataLine[1]], latlngPairs[dataLine[2]]),
                             Occupancy = dataLine[4],
                             Notify = bool.Parse(dataLine[5]),
                             Day = dataLine[6]
@@ -242,12 +239,6 @@ namespace HSE_Transport1.Activities
             return (departure == "Dubki" && (arrival == "Slavyanski" || arrival == "Odintsovo"))
                 || (departure == "Odintsovo" && (arrival == "Dubki"))
                 || (departure == "Slavyanski" && arrival == "Dubki");
-        }
-
-        static bool RightDuration(string str)
-        {
-            int duration;
-            return int.TryParse(str, out duration) && duration > 0;
         }
 
         void SortBuses()
