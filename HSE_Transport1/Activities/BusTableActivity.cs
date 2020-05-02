@@ -210,9 +210,8 @@ namespace HSE_Transport1.Activities
                             DepartureTime = departureTime,
                             DeparturePlace = dataLine[1],
                             ArrivalPlace = dataLine[2],
-                            Occupancy = dataLine[4],
-                            Notify = bool.Parse(dataLine[5]),
-                            Day = dataLine[6]
+                            Occupancy = dataLine[3],
+                            Day = dataLine[4]
                         };
 
                         buses.Add(bus);

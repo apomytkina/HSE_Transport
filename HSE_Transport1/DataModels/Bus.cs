@@ -19,7 +19,6 @@ namespace HSE_Transport1
         public string DeparturePlace { get; set; }
         public string ArrivalPlace { get; set; }
         public string Occupancy { get; set; }
-        public bool Notify { get; set; }
         public string Day { get; set; }
     }
 }

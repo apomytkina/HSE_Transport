@@ -201,7 +201,6 @@ namespace HSE_Transport1
 
                         if (DateTime.TryParse(dataLine[0], out departureTime)
                             && RightDirection(dataLine[1], dataLine[2])
-                            /*&& RightDuration(dataLine[3])*/
                             && (dataLine[4] == "extra-low"
                             || dataLine[4] == "low"
                             || dataLine[4] == "medium"
@@ -217,9 +216,8 @@ namespace HSE_Transport1
                                 DepartureTime = departureTime,
                                 DeparturePlace = dataLine[1],
                                 ArrivalPlace = dataLine[2],
-                                Occupancy = dataLine[4],
-                                Notify = bool.Parse(dataLine[5]),
-                                Day = dataLine[6]
+                                Occupancy = dataLine[3],
+                                Day = dataLine[4]
                             };
 
                             buses.Add(bus);
