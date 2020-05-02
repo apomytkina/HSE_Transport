@@ -6,6 +6,13 @@ namespace HSE_Transport1.Helpers
 {
     public class MapHelper
     {
+        /// <summary>
+        /// Method that returns json-string with direction information
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="destLocation"></param>
+        /// <param name="mapkey"></param>
+        /// <returns></returns>
         public async Task<string> GetDirectionJsonAsync(LatLng location, LatLng destLocation, string mapkey)
         {
             // Origin of route

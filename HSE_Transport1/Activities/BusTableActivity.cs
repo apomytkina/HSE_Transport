@@ -2,29 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Android.App;
-using Android.Content;
-using Android.Gms.Maps.Model;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
-using Android.Support.V7.RecyclerView.Extensions;
 using Android.Views;
 using Android.Widget;
 using FR.Ganfra.Materialspinner;
 using HSE_Transport1.Adapters;
-using HSE_Transport1.Helpers;
-using Microsoft.AspNetCore.JsonPatch.Internal;
-using Newtonsoft.Json;
 
 namespace HSE_Transport1.Activities
 {
     [Activity(Label = "BusTableActivity", Theme = "@style/AppTheme", MainLauncher = false)]
     public class BusTableActivity : AppCompatActivity
     {
-        //LinearLayout noteLayout;
         TextView noteTextView;
 
         ListView scheduleListView;
@@ -34,12 +24,10 @@ namespace HSE_Transport1.Activities
         List<Bus> arrivalBuses;
         List<Bus> departureBuses;
 
-        ImageButton mapButton;
         ImageButton scheduleButton;
-        ImageButton notificationButton;
+        ImageButton busesButton;
 
-        RelativeLayout notficationLayout;
-        RelativeLayout mapLayout;
+        RelativeLayout busesLayout;
         RelativeLayout scheduleLayout;
 
         Android.Support.V7.Widget.Toolbar toolbar;
@@ -63,7 +51,6 @@ namespace HSE_Transport1.Activities
 
             SetContentView(Resource.Layout.bus_table);
 
-            //noteLayout = (LinearLayout)FindViewById(Resource.Id.noteLayout);
             noteTextView = (TextView)FindViewById(Resource.Id.noteTextView);
             scheduleListView = (ListView)FindViewById(Resource.Id.scheduleListView);
 
@@ -71,18 +58,16 @@ namespace HSE_Transport1.Activities
             toolbar = (Android.Support.V7.Widget.Toolbar)FindViewById(Resource.Id.tableToolbar);
 
             scheduleLayout = (RelativeLayout)FindViewById(Resource.Id.schedule_layout);
-            notficationLayout = (RelativeLayout)FindViewById(Resource.Id.notification_layout);
-            mapLayout = (RelativeLayout)FindViewById(Resource.Id.map_layout);
+            busesLayout = (RelativeLayout)FindViewById(Resource.Id.buses_layout);
 
             scheduleButton = (ImageButton)FindViewById(Resource.Id.scheduleButton);
-            notificationButton = (ImageButton)FindViewById(Resource.Id.notificationButton);
-            mapButton = (ImageButton)FindViewById(Resource.Id.mapButton);
+            busesButton = (ImageButton)FindViewById(Resource.Id.busesButton);
 
-            scheduleButton.Click += ScheduleButton_Click;
-            notificationButton.Click += NotificationButton_Click;
+            scheduleButton.Click += Schedule_Click;
+            busesButton.Click += Buses_Click;
 
-            notficationLayout.Click += NotficationLayout_Click;
-            scheduleLayout.Click += ScheduleLayout_Click;
+            busesLayout.Click += Buses_Click;
+            scheduleLayout.Click += Schedule_Click;
 
             ParseData();
             SortBuses();
@@ -92,40 +77,31 @@ namespace HSE_Transport1.Activities
             SetUpListView(withoutTimeBuses, mon_fri_dub_odi, mon_fri_odi_dub);
         }
 
-        private void NotificationButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Method that starts BusTableActivity when clicking 
+        /// on busButton or busLayout
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Buses_Click(object sender, EventArgs e)
         {
-            InitBusTableActivity();
+            StartActivity(typeof(BusTableActivity));
         }
 
-        private void ScheduleButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Method that starts MainActivity when clicking
+        /// on scheduleButton or scheduleLayout
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Schedule_Click(object sender, EventArgs e)
         {
-            InitMainActivity();
+            StartActivity(typeof(MainActivity));
         }
 
-        private void ScheduleLayout_Click(object sender, EventArgs e)
-        {
-            InitBusTableActivity();
-        }
-
-        private void NotficationLayout_Click(object sender, EventArgs e)
-        {
-            InitMainActivity();
-        }
-
-        void InitMainActivity()
-        {
-            Intent intent = new Intent(this, typeof(MainActivity));
-            StartActivity(intent);
-            Finish();
-        }
-
-        void InitBusTableActivity()
-        {
-            Intent intent = new Intent(this, typeof(BusTableActivity));
-            StartActivity(intent);
-            Finish();
-        }
-
+        /// <summary>
+        /// Method that sets up day spinner
+        /// </summary>
         void SetUpSpinner()
         {
             departureBuses = mon_fri_dub_odi;
@@ -144,6 +120,11 @@ namespace HSE_Transport1.Activities
             daySpinner.ItemSelected += DaySpinner_ItemSelected;
         }
 
+        /// <summary>
+        /// Method that invokes day spinner
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DaySpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
             if (e.Position != -1)
@@ -186,12 +167,18 @@ namespace HSE_Transport1.Activities
             }
         }
 
+        /// <summary>
+        /// Method that sets up toolbar
+        /// </summary>
         void SetUpToolbar()
         {
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Расписание автобусов";
         }
 
+        /// <summary>
+        /// Method that parses data abput buses from "bus_info.csv"
+        /// </summary>
         void ParseData()
         {
             buses = new List<Bus>();
@@ -234,6 +221,12 @@ namespace HSE_Transport1.Activities
             }
         }
 
+        /// <summary>
+        /// Method that checks weather a bus has a right direction
+        /// </summary>
+        /// <param name="departure"></param>
+        /// <param name="arrival"></param>
+        /// <returns></returns>
         static bool RightDirection(string departure, string arrival)
         {
             return (departure == "Dubki" && (arrival == "Slavyanski" || arrival == "Odintsovo"))
@@ -241,42 +234,39 @@ namespace HSE_Transport1.Activities
                 || (departure == "Slavyanski" && arrival == "Dubki");
         }
 
+        /// <summary>
+        /// Method that sorts buses by day of week
+        /// </summary>
         void SortBuses()
         {
             mon_fri_dub_odi = buses
                 .Where(x => x.Day != "Sunday" && x.Day != "Saturday")
                 .Where(x => x.DeparturePlace == "Dubki")
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             mon_fri_odi_dub = buses
                 .Where(x => x.Day != "Sunday" && x.Day != "Saturday")
                 .Where(x => x.ArrivalPlace == "Dubki")
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             sat_dub_odi = buses
                 .Where(x => x.Day == "Saturday")
                 .Where(x => x.DeparturePlace == "Dubki")
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             sat_odi_dub = buses
                 .Where(x => x.Day == "Saturday")
                 .Where(x => x.ArrivalPlace == "Dubki")
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             sun_dub = buses
                 .Where(x => x.Day == "Sunday")
                 .Where(x => x.DeparturePlace == "Dubki")
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             sun_odi = buses
                .Where(x => x.Day == "Sunday")
                .Where(x => x.DeparturePlace == "Odintsovo")
-               //.OrderBy(x => x.DepartureTime)
                .ToList();
 
             withoutTimeBuses = mon_fri_dub_odi
@@ -284,6 +274,12 @@ namespace HSE_Transport1.Activities
                        .Count();
         }
 
+        /// <summary>
+        /// Method that sets up scheduleListView
+        /// </summary>
+        /// <param name="withoutTimeBuses"></param>
+        /// <param name="departureBuses"></param>
+        /// <param name="arrivalBuses"></param>
         void SetUpListView(int withoutTimeBuses, List<Bus> departureBuses, List<Bus> arrivalBuses)
         {
             for (int i = 0; i < withoutTimeBuses; i++)

@@ -1,16 +1,14 @@
  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:background="@android:color/white"
-    android:layout_marginRight="5dp"
-    android:layout_marginLeft="5dp"
     android:layout_marginBottom="11dp"
     android:layout_width="match_parent"
-    android:layout_height="117dp">
+    android:layout_height="90dp">
 
     <LinearLayout
         android:background="@drawable/curvededges"
         android:layout_width="match_parent"
-        android:layout_height="89dp">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:background="@drawable/curvededges"
@@ -21,7 +19,7 @@
                 android:id="@+id/timeTextView"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:textColor="@color/blueTextColor"
+                android:textColor="@color/colorPrimary"
                 android:textSize="20dp"
                 android:text="12.42"
                 android:layout_width="match_parent"
@@ -38,21 +36,54 @@
                 android:id="@+id/loadTextView"
                 android:layout_marginTop="5dp"
                 android:textStyle="bold"
-                android:textColor="@color/blueTextColor"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
                 android:gravity="center"
-                android:text="Загруженность:"
+                android:text="Примерная Загруженность:"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <RelativeLayout
-                android:id="@+id/loadLayout"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_below="@+id/loadTextView"
                 android:layout_centerInParent="true"
-                android:background="@drawable/roundbutton"
-                android:layout_width="180dp"
-                android:layout_height="34dp"/>
+                android:background="@drawable/curve"
+                android:layout_width="200dp"
+                android:layout_height="30dp">
+
+
+                <RelativeLayout
+                    android:id="@+id/occupancy_layout1"
+                    android:layout_weight="0.2"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/occupancy_layout2"
+                    android:layout_weight="0.2"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/occupancy_layout3"
+                    android:layout_weight="0.2"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/occupancy_layout4"
+                    android:layout_weight="0.2"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/occupancy_layout5"
+                    android:layout_weight="0.2"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 

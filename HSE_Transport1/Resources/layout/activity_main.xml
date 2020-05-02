@@ -24,8 +24,8 @@
          android:layout_height="wrap_content"/>
 
     <android.support.v7.widget.RecyclerView
+        android:background="@drawable/background"
         android:id="@+id/busesRecyclerView"
-        android:background="#e2e2e2"
         android:scrollbars="vertical"
         android:layout_weight="0.8"
         android:layout_width="match_parent"

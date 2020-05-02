@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-using Android.App;
 using Android.Content;
-using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
@@ -104,7 +98,6 @@ namespace HSE_Transport1.Adapters
             return view;
         }
 
-        //Fill in cound here, currently 0
         public override int Count
         {
             get { return Math.Max(departureBuses.Count, arrivalBuses.Count); }

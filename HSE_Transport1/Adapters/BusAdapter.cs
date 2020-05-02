@@ -19,11 +19,10 @@ namespace HSE_Transport1.Adapters
             BusesList = data;
         }
 
-        // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
 
-            //Setup your layout here
+            //Settin up layout 
             View itemView = null;
             itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.bus_row, parent, false);
 
@@ -31,33 +30,51 @@ namespace HSE_Transport1.Adapters
             return vh;
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
             var bus = BusesList[position];
 
-            // Replace the contents of the view with that element
             var holder = viewHolder as BusAdapterViewHolder;
 
             if (bus.Occupancy == "extra-low")
             {
-                holder.loadLayout.SetBackgroundColor(Color.DarkGreen);
+                holder.occupancyLayout1.SetBackgroundColor(Color.ForestGreen);
+                holder.occupancyLayout2.SetBackgroundColor(Color.White);
+                holder.occupancyLayout3.SetBackgroundColor(Color.White);
+                holder.occupancyLayout4.SetBackgroundColor(Color.White);
+                holder.occupancyLayout5.SetBackgroundColor(Color.White);
             }
             if (bus.Occupancy == "low")
             {
-                holder.loadLayout.SetBackgroundColor(Color.Green);
+                holder.occupancyLayout1.SetBackgroundColor(Color.LightGreen);
+                holder.occupancyLayout2.SetBackgroundColor(Color.LightGreen);
+                holder.occupancyLayout3.SetBackgroundColor(Color.White);
+                holder.occupancyLayout4.SetBackgroundColor(Color.White);
+                holder.occupancyLayout5.SetBackgroundColor(Color.White);
             }
             if (bus.Occupancy == "medium")
             {
-                holder.loadLayout.SetBackgroundColor(Color.Gold);
+                holder.occupancyLayout1.SetBackgroundColor(Color.Gold);
+                holder.occupancyLayout2.SetBackgroundColor(Color.Gold);
+                holder.occupancyLayout3.SetBackgroundColor(Color.Gold);
+                holder.occupancyLayout4.SetBackgroundColor(Color.White);
+                holder.occupancyLayout5.SetBackgroundColor(Color.White);
             }
             if (bus.Occupancy == "high")
             {
-                holder.loadLayout.SetBackgroundColor(Color.Orange);
+                holder.occupancyLayout1.SetBackgroundColor(Color.Orange);
+                holder.occupancyLayout2.SetBackgroundColor(Color.Orange);
+                holder.occupancyLayout3.SetBackgroundColor(Color.Orange);
+                holder.occupancyLayout4.SetBackgroundColor(Color.Orange);
+                holder.occupancyLayout5.SetBackgroundColor(Color.White);
             }
             if (bus.Occupancy == "extra-high")
             {
-                holder.loadLayout.SetBackgroundColor(Color.Red);
+                holder.occupancyLayout1.SetBackgroundColor(Color.Red);
+                holder.occupancyLayout2.SetBackgroundColor(Color.Red);
+                holder.occupancyLayout3.SetBackgroundColor(Color.Red);
+                holder.occupancyLayout4.SetBackgroundColor(Color.Red);
+                holder.occupancyLayout5.SetBackgroundColor(Color.Red);
             }
 
             holder.timeTextView.Text = bus.DepartureTime.ToString("HH:mm");        }
@@ -70,14 +87,24 @@ namespace HSE_Transport1.Adapters
 
     public class BusAdapterViewHolder : RecyclerView.ViewHolder
     {
+        public RelativeLayout occupancyLayout1;
+        public RelativeLayout occupancyLayout2;
+        public RelativeLayout occupancyLayout3;
+        public RelativeLayout occupancyLayout4;
+        public RelativeLayout occupancyLayout5;
+
         public TextView timeTextView;
-        public RelativeLayout loadLayout;
 
         public BusAdapterViewHolder(View itemView, Action<BusAdapterClickEventArgs> clickListener,
                             Action<BusAdapterClickEventArgs> longClickListener) : base(itemView)
         {
+            occupancyLayout1 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout1);
+            occupancyLayout2 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout2);
+            occupancyLayout3 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout3);
+            occupancyLayout4 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout4);
+            occupancyLayout5 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout5);
+
             timeTextView = (TextView)itemView.FindViewById(Resource.Id.timeTextView);
-            loadLayout = (RelativeLayout)itemView.FindViewById(Resource.Id.loadLayout);
 
             itemView.Click += (sender, e) => clickListener(new BusAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
             itemView.LongClick += (sender, e) => longClickListener(new BusAdapterClickEventArgs { View = itemView, Position = AdapterPosition });

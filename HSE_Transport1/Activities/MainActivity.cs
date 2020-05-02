@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Runtime;
 using Android.Widget;
 using Android.Support.V7.Widget;
 using HSE_Transport1.Adapters;
@@ -10,12 +9,7 @@ using FR.Ganfra.Materialspinner;
 using System;
 using System.IO;
 using System.Linq;
-using Android.Content;
 using HSE_Transport1.Activities;
-using Android.Support.V4.App;
-using Android.Graphics;
-using Java.Util;
-using Android.Media;
 using System.Threading.Tasks;
 using Android.Gms.Maps.Model;
 using HSE_Transport1.Helpers;
@@ -38,17 +32,11 @@ namespace HSE_Transport1
         TextView durationTextView;
 
         MapHelper mapHepler = new MapHelper();
-        List<Bus> notificationBuses;
 
-        public const int NOTI_SECONDARY1 = 1200;
-        public const string SECONDARY_CHANNEL = "second";
-
-        ImageButton mapButton;
         ImageButton scheduleButton;
-        ImageButton notificationButton;
+        ImageButton busesButton;
 
-        RelativeLayout notficationLayout;
-        RelativeLayout mapLayout;
+        RelativeLayout busesLayout;
         RelativeLayout scheduleLayout;
 
         Android.Support.V7.Widget.Toolbar toolbar;
@@ -73,7 +61,7 @@ namespace HSE_Transport1
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            // Set our view from the "main" layout resource
+
             SetContentView(Resource.Layout.activity_main);
 
             slavyanskiPosition = new LatLng(55.728246, 37.473204);
@@ -89,68 +77,58 @@ namespace HSE_Transport1
             RequestPermissions(permissionsGroup, 0);
 
             durationTextView = (TextView)FindViewById(Resource.Id.durationTextView);
-            notificationBuses = new List<Bus>();
 
             routeSpinner = (MaterialSpinner)FindViewById(Resource.Id.routeSpinner);
             busesRecyclerView = (RecyclerView)FindViewById(Resource.Id.busesRecyclerView);
             toolbar = (Android.Support.V7.Widget.Toolbar)FindViewById(Resource.Id.busesToolbar);
 
             scheduleLayout = (RelativeLayout)FindViewById(Resource.Id.schedule_layout);
-            notficationLayout = (RelativeLayout)FindViewById(Resource.Id.notification_layout);
-            mapLayout = (RelativeLayout)FindViewById(Resource.Id.map_layout);
+            busesLayout = (RelativeLayout)FindViewById(Resource.Id.buses_layout);
 
             scheduleButton = (ImageButton)FindViewById(Resource.Id.scheduleButton);
-            notificationButton = (ImageButton)FindViewById(Resource.Id.notificationButton);
-            mapButton = (ImageButton)FindViewById(Resource.Id.mapButton);
+            busesButton = (ImageButton)FindViewById(Resource.Id.busesButton);
 
-            scheduleButton.Click += ScheduleButton_Click;
-            notificationButton.Click += NotificationButton_Click;
+            scheduleButton.Click += Schedule_Click;
+            busesButton.Click += Buses_Click;
 
-            notficationLayout.Click += NotficationLayout_Click;
-            scheduleLayout.Click += ScheduleLayout_Click;
+            busesLayout.Click += Buses_Click;
+            scheduleLayout.Click += Schedule_Click;
 
             ParseData();
-            SortBuses();
+            SortBusesByDay();
+            SortBusesByTime();
 
             SetUpToolbars();
             SetUpSpinner();
             SetUpRecyclerViewAsync();
         }
 
-        private void NotificationButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Method that starts MainActivity when clicking
+        /// on the busesButton or busesLayout
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Buses_Click(object sender, EventArgs e)
         {
-            InitBusTableActivity();
+            StartActivity(typeof(BusTableActivity));
         }
 
-        private void ScheduleButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Method that starts BusTableActivity when clicking 
+        /// on scheduleButton or scheduleLayout
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Schedule_Click(object sender, EventArgs e)
         {
-            InitMainActivity();
+            StartActivity(typeof(MainActivity));
         }
 
-        private void ScheduleLayout_Click(object sender, EventArgs e)
-        {
-            InitMainActivity();
-        }
-
-        private void NotficationLayout_Click(object sender, EventArgs e)
-        {
-            InitBusTableActivity();
-        }
-
-        void InitMainActivity()
-        {
-            Intent intent = new Intent(this, typeof(MainActivity));
-            StartActivity(intent);
-            Finish();
-        }
-
-        void InitBusTableActivity()
-        {
-            Intent intent = new Intent(this, typeof(BusTableActivity));
-            StartActivity(intent);
-            Finish();
-        }
-
+        /// <summary>
+        /// Method that starts RecyclerView of buses
+        /// </summary>
+        /// <returns></returns>
         async Task SetUpRecyclerViewAsync()
         {
             busesRecyclerView.SetLayoutManager(new LinearLayoutManager(busesRecyclerView.Context));
@@ -158,6 +136,10 @@ namespace HSE_Transport1
             busesRecyclerView.SetAdapter(busesAdapter);
             await GetDirectionAsync(latlngPairs[listOfBuses[0].DeparturePlace], latlngPairs[listOfBuses[0].ArrivalPlace]);
         }
+
+        /// <summary>
+        /// Method that sets up route spinner
+        /// </summary>
         void SetUpSpinner()
         {
             routes = new Dictionary<string, List<Bus>>();
@@ -180,6 +162,11 @@ namespace HSE_Transport1
             routeSpinner.ItemSelected += RouteSpinner_ItemSelected;
         }
 
+        /// <summary>
+        /// Method that invokes route spinner when choosing route 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RouteSpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
             if (e.Position != -1)
@@ -192,78 +179,87 @@ namespace HSE_Transport1
             }
         }
 
+        /// <summary>
+        /// Method that parses data about buses from the file "bus_info.csv"
+        /// </summary>
         void ParseData()
         {
             buses = new List<Bus>();
 
             using (StreamReader sr = new StreamReader(Assets.Open("bus_info.csv")))
             {
-                sr.ReadLine();
-                string stringLine;
-                while ((stringLine = sr.ReadLine()) != null && stringLine.Length > 0)
+                try
                 {
-                    var dataLine = stringLine.Split(',');
-
-                    DateTime departureTime;
-                    bool notify;
-
-                    if (DateTime.TryParse(dataLine[0], out departureTime)
-                        && RightDirection(dataLine[1], dataLine[2])
-                        /*&& RightDuration(dataLine[3])*/
-                        && (dataLine[4] == "extra-low"
-                        || dataLine[4] == "low"
-                        || dataLine[4] == "medium"
-                        || dataLine[4] == "high"
-                        || dataLine[4] == "extra-high")
-                        && bool.TryParse(dataLine[5], out notify)
-                        && (dataLine[6] == "Monday-Friday"
-                        || dataLine[6] == "Saturday"
-                        || dataLine[6] == "Sunday"))
+                    sr.ReadLine();
+                    string stringLine;
+                    while ((stringLine = sr.ReadLine()) != null && stringLine.Length > 0)
                     {
-                        Bus bus = new Bus
-                        {
-                            DepartureTime = departureTime,
-                            DeparturePlace = dataLine[1],
-                            ArrivalPlace = dataLine[2],
-                            Occupancy = dataLine[4],
-                            Notify = bool.Parse(dataLine[5]),
-                            Day = dataLine[6]
-                        };
+                        var dataLine = stringLine.Split(',');
 
-                        buses.Add(bus);
-                    }
-                };
+                        DateTime departureTime;
+                        bool notify;
+
+                        if (DateTime.TryParse(dataLine[0], out departureTime)
+                            && RightDirection(dataLine[1], dataLine[2])
+                            /*&& RightDuration(dataLine[3])*/
+                            && (dataLine[4] == "extra-low"
+                            || dataLine[4] == "low"
+                            || dataLine[4] == "medium"
+                            || dataLine[4] == "high"
+                            || dataLine[4] == "extra-high")
+                            && bool.TryParse(dataLine[5], out notify)
+                            && (dataLine[6] == "Monday-Friday"
+                            || dataLine[6] == "Saturday"
+                            || dataLine[6] == "Sunday"))
+                        {
+                            Bus bus = new Bus
+                            {
+                                DepartureTime = departureTime,
+                                DeparturePlace = dataLine[1],
+                                ArrivalPlace = dataLine[2],
+                                Occupancy = dataLine[4],
+                                Notify = bool.Parse(dataLine[5]),
+                                Day = dataLine[6]
+                            };
+
+                            buses.Add(bus);
+                        }
+                    };
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 
-        void SortBuses()
+        /// <summary>
+        /// Method that sorts buses by days of week
+        /// </summary>
+        void SortBusesByDay()
         {
             dubki_odintsovo = buses
                 .Where(x => x.DeparturePlace == "Dubki")
                 .Where(x => x.ArrivalPlace == "Odintsovo")
                 .Where(x => x.DepartureTime >= DateTime.Now || x.DepartureTime <= DateTime.Parse("2:00"))
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             odintsovo_dubki = buses
                 .Where(x => x.DeparturePlace == "Odintsovo")
                 .Where(x => x.ArrivalPlace == "Dubki")
                 .Where(x => x.DepartureTime >= DateTime.Now || x.DepartureTime <= DateTime.Parse("2:00"))
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             slavyanski_dubki = buses
                 .Where(x => x.DeparturePlace == "Slavyanski")
                 .Where(x => x.ArrivalPlace == "Dubki")
                 .Where(x => x.DepartureTime >= DateTime.Now || x.DepartureTime <= DateTime.Parse("2:00"))
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             dubki_slavyanski = buses
                 .Where(x => x.DeparturePlace == "Dubki")
                 .Where(x => x.ArrivalPlace == "Slavyanski")
                 .Where(x => x.DepartureTime >= DateTime.Now || x.DepartureTime <= DateTime.Parse("2:00"))
-                //.OrderBy(x => x.DepartureTime)
                 .ToList();
 
             if (DateTime.Now.DayOfWeek.ToString() == "Saturday" || DateTime.Now.DayOfWeek.ToString() == "Sunday")
@@ -303,9 +299,17 @@ namespace HSE_Transport1
                     .ToList();
             }
 
+            listOfBuses = dubki_odintsovo;
+        }
+
+        /// <summary>
+        /// Method that sorts buses by departureTime
+        /// </summary>
+        void SortBusesByTime()
+        {
             dubki_odintsovo
-                .Where(x => x.DepartureTime <= DateTime.Parse("2:00"))
-                .OrderBy(x => x.DepartureTime);
+              .Where(x => x.DepartureTime <= DateTime.Parse("2:00"))
+              .OrderBy(x => x.DepartureTime);
 
             odintsovo_dubki
                 .Where(x => x.DepartureTime <= DateTime.Parse("2:00"))
@@ -319,9 +323,29 @@ namespace HSE_Transport1
                 .Where(x => x.DepartureTime <= DateTime.Parse("2:00"))
                 .OrderBy(x => x.DepartureTime);
 
-            listOfBuses = dubki_odintsovo;
+            dubki_odintsovo
+                .Where(x => x.DepartureTime >= DateTime.Parse("2:00"))
+                .OrderBy(x => x.DepartureTime);
+
+            odintsovo_dubki
+                .Where(x => x.DepartureTime >= DateTime.Parse("2:00"))
+                .OrderBy(x => x.DepartureTime);
+
+            dubki_slavyanski
+                .Where(x => x.DepartureTime >= DateTime.Parse("2:00"))
+                .OrderBy(x => x.DepartureTime);
+
+            slavyanski_dubki
+                .Where(x => x.DepartureTime >= DateTime.Parse("2:00"))
+                .OrderBy(x => x.DepartureTime);
         }
 
+        /// <summary>
+        /// Method that checks wheather a bus has a right direction
+        /// </summary>
+        /// <param name="departure"></param>
+        /// <param name="arrival"></param>
+        /// <returns></returns>
         static bool RightDirection(string departure, string arrival)
         {
             return (departure == "Dubki" && (arrival == "Slavyanski" || arrival == "Odintsovo"))
@@ -329,12 +353,22 @@ namespace HSE_Transport1
                 || (departure == "Slavyanski" && arrival == "Dubki");
         }
 
+        /// <summary>
+        /// Method that sets up toolbar
+        /// </summary>
         void SetUpToolbars()
         {
             SetSupportActionBar(toolbar);
             SupportActionBar.Title = "Ближайшие автобусы сегодня";
         }
 
+        /// <summary>
+        /// Method that returns journey time depending on
+        /// start location and destination location
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="destLocation"></param>
+        /// <returns></returns>
         async Task GetDirectionAsync(LatLng location, LatLng destLocation)
         {
             string key = Resources.GetString(Resource.String.mapkey);
