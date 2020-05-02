@@ -197,19 +197,17 @@ namespace HSE_Transport1
                         var dataLine = stringLine.Split(',');
 
                         DateTime departureTime;
-                        bool notify;
 
                         if (DateTime.TryParse(dataLine[0], out departureTime)
                             && RightDirection(dataLine[1], dataLine[2])
-                            && (dataLine[4] == "extra-low"
-                            || dataLine[4] == "low"
-                            || dataLine[4] == "medium"
-                            || dataLine[4] == "high"
-                            || dataLine[4] == "extra-high")
-                            && bool.TryParse(dataLine[5], out notify)
-                            && (dataLine[6] == "Monday-Friday"
-                            || dataLine[6] == "Saturday"
-                            || dataLine[6] == "Sunday"))
+                            && (dataLine[3] == "extra-low"
+                            || dataLine[3] == "low"
+                            || dataLine[3] == "medium"
+                            || dataLine[3] == "high"
+                            || dataLine[3] == "extra-high")
+                            && (dataLine[4] == "Monday-Friday"
+                            || dataLine[4] == "Saturday"
+                            || dataLine[4] == "Sunday"))
                         {
                             Bus bus = new Bus
                             {

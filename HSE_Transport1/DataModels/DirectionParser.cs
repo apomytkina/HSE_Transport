@@ -103,5 +103,4 @@ namespace HSE_Transport1.Helpers
         public IList<Route> routes { get; set; }
         public string status { get; set; }
     }
-
 }

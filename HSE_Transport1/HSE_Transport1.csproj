@@ -69,7 +69,7 @@
     <Compile Include="Adapters\BusAdapter.cs" />
     <Compile Include="Adapters\ScheduleAdapter.cs" />
     <Compile Include="DataModels\Bus.cs" />
-    <Compile Include="Helpers\DirectionParser.cs" />
+    <Compile Include="DataModels\DirectionParser.cs" />
     <Compile Include="Helpers\MapHelper.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -142,11 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\bus_table.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\map.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
