@@ -18,7 +18,7 @@ using static Android.Manifest;
 
 namespace HSE_Transport1
 {
-    [Activity(Label = "Ближайшие автобусы", Theme = "@style/AppTheme", MainLauncher = false, Icon = "@mipmap/ic_launcher")]
+    [Activity(Label = "Ближайшие автобусы", Theme = "@style/AppTheme", MainLauncher = false, Icon = "@mipmap/icon_launcher")]
     public class MainActivity : AppCompatActivity
     {
         static Dictionary<string, LatLng> latlngPairs;
@@ -373,13 +373,17 @@ namespace HSE_Transport1
         {
             string key = Resources.GetString(Resource.String.mapkey);
 
-            string directionJson = await mapHepler.GetDirectionJsonAsync(location, destLocation, key);
-
-            var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
-
-            double durationString = directionData.routes[0].legs[0].duration.value / 60;
-
-            durationTextView.Text = "Время в пути по данному маршруту: " + durationString + " мин";
+            try
+            {
+                string directionJson = await mapHepler.GetDirectionJsonAsync(location, destLocation, key);
+                var directionData = JsonConvert.DeserializeObject<DirectionParser>(directionJson);
+                double durationString = directionData.routes[0].legs[0].duration.value / 60;
+                durationTextView.Text = "Время в пути по данному маршруту: " + durationString + " мин";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

@@ -46,8 +46,8 @@ namespace HSE_Transport1.Adapters
             }
             if (bus.Occupancy == "low")
             {
-                holder.occupancyLayout1.SetBackgroundColor(Color.LightGreen);
-                holder.occupancyLayout2.SetBackgroundColor(Color.LightGreen);
+                holder.occupancyLayout1.SetBackgroundColor(Color.Green);
+                holder.occupancyLayout2.SetBackgroundColor(Color.Green);
                 holder.occupancyLayout3.SetBackgroundColor(Color.White);
                 holder.occupancyLayout4.SetBackgroundColor(Color.White);
                 holder.occupancyLayout5.SetBackgroundColor(Color.White);
