@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using Android.Gms.Maps.Model;
 using HSE_Transport1.Helpers;
 using Newtonsoft.Json;
-using static Android.Manifest;
 
 namespace HSE_Transport1
 {
@@ -24,19 +23,14 @@ namespace HSE_Transport1
         static Dictionary<string, LatLng> latlngPairs;
 
         LatLng dubkiPosition;
-        LatLng odintosovoPosition;
+        LatLng odintsovoPosition;
         LatLng slavyanskiPosition;
-
-        readonly string[] permissionsGroup = { Permission.Internet };
 
         TextView durationTextView;
 
         MapHelper mapHepler = new MapHelper();
 
         ImageButton scheduleButton;
-        ImageButton busesButton;
-
-        RelativeLayout busesLayout;
         RelativeLayout scheduleLayout;
 
         Android.Support.V7.Widget.Toolbar toolbar;
@@ -65,16 +59,14 @@ namespace HSE_Transport1
             SetContentView(Resource.Layout.activity_main);
 
             slavyanskiPosition = new LatLng(55.728246, 37.473204);
-            odintosovoPosition = new LatLng(55.672067, 37.279666);
+            odintsovoPosition = new LatLng(55.672067, 37.279666);
             dubkiPosition = new LatLng(55.660864, 37.226496);
 
             latlngPairs = new Dictionary<string, LatLng>();
 
             latlngPairs.Add("Dubki", dubkiPosition);
-            latlngPairs.Add("Odintsovo", odintosovoPosition);
+            latlngPairs.Add("Odintsovo", odintsovoPosition);
             latlngPairs.Add("Slavyanski", slavyanskiPosition);
-
-            RequestPermissions(permissionsGroup, 0);
 
             durationTextView = (TextView)FindViewById(Resource.Id.durationTextView);
 
@@ -83,15 +75,9 @@ namespace HSE_Transport1
             toolbar = (Android.Support.V7.Widget.Toolbar)FindViewById(Resource.Id.busesToolbar);
 
             scheduleLayout = (RelativeLayout)FindViewById(Resource.Id.schedule_layout);
-            busesLayout = (RelativeLayout)FindViewById(Resource.Id.buses_layout);
-
             scheduleButton = (ImageButton)FindViewById(Resource.Id.scheduleButton);
-            busesButton = (ImageButton)FindViewById(Resource.Id.busesButton);
 
             scheduleButton.Click += Schedule_Click;
-            busesButton.Click += Buses_Click;
-
-            busesLayout.Click += Buses_Click;
             scheduleLayout.Click += Schedule_Click;
 
             ParseData();
@@ -104,17 +90,6 @@ namespace HSE_Transport1
         }
 
         /// <summary>
-        /// Method that starts MainActivity when clicking
-        /// on the busesButton or busesLayout
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Buses_Click(object sender, EventArgs e)
-        {
-            StartActivity(typeof(BusTableActivity));
-        }
-
-        /// <summary>
         /// Method that starts BusTableActivity when clicking 
         /// on scheduleButton or scheduleLayout
         /// </summary>
@@ -122,7 +97,7 @@ namespace HSE_Transport1
         /// <param name="e"></param>
         private void Schedule_Click(object sender, EventArgs e)
         {
-            StartActivity(typeof(MainActivity));
+            StartActivity(typeof(BusTableActivity));
         }
 
         /// <summary>

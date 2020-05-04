@@ -24,11 +24,8 @@ namespace HSE_Transport1.Activities
         List<Bus> arrivalBuses;
         List<Bus> departureBuses;
 
-        ImageButton scheduleButton;
         ImageButton busesButton;
-
         RelativeLayout busesLayout;
-        RelativeLayout scheduleLayout;
 
         Android.Support.V7.Widget.Toolbar toolbar;
         
@@ -57,18 +54,12 @@ namespace HSE_Transport1.Activities
             daySpinner = (MaterialSpinner)FindViewById(Resource.Id.daySpinner);
             toolbar = (Android.Support.V7.Widget.Toolbar)FindViewById(Resource.Id.tableToolbar);
 
-            scheduleLayout = (RelativeLayout)FindViewById(Resource.Id.schedule_layout);
-            busesLayout = (RelativeLayout)FindViewById(Resource.Id.buses_layout);
-
-            scheduleButton = (ImageButton)FindViewById(Resource.Id.scheduleButton);
+            busesLayout = (RelativeLayout)FindViewById(Resource.Id.buses_layout);            
             busesButton = (ImageButton)FindViewById(Resource.Id.busesButton);
 
-            scheduleButton.Click += Schedule_Click;
             busesButton.Click += Buses_Click;
-
             busesLayout.Click += Buses_Click;
-            scheduleLayout.Click += Schedule_Click;
-
+         
             ParseData();
             SortBuses();
 
@@ -84,17 +75,6 @@ namespace HSE_Transport1.Activities
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Buses_Click(object sender, EventArgs e)
-        {
-            StartActivity(typeof(BusTableActivity));
-        }
-
-        /// <summary>
-        /// Method that starts MainActivity when clicking
-        /// on scheduleButton or scheduleLayout
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Schedule_Click(object sender, EventArgs e)
         {
             StartActivity(typeof(MainActivity));
         }
