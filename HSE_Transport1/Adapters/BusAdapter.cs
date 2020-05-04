@@ -22,7 +22,7 @@ namespace HSE_Transport1.Adapters
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
 
-            //Settin up layout 
+            //Setting up layout 
             View itemView = null;
             itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.bus_row, parent, false);
 
