@@ -78,6 +78,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\bus_info.csv" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />

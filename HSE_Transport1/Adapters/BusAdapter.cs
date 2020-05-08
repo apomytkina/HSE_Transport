@@ -1,5 +1,4 @@
-﻿using System;
-using Android.Views;
+﻿using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
 using System.Collections.Generic;
@@ -9,9 +8,6 @@ namespace HSE_Transport1.Adapters
 {
     class BusAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<BusAdapterClickEventArgs> ItemClick;
-        public event EventHandler<BusAdapterClickEventArgs> ItemLongClick;
-
         List<Bus> busesList; 
 
         public BusAdapter(List<Bus> data)
@@ -25,7 +21,7 @@ namespace HSE_Transport1.Adapters
             View itemView = null;
             itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.bus_row, parent, false);
 
-            var vh = new BusAdapterViewHolder(itemView, OnClick, OnLongClick);
+            var vh = new BusAdapterViewHolder(itemView);
             return vh;
         }
 
@@ -79,9 +75,6 @@ namespace HSE_Transport1.Adapters
             holder.timeTextView.Text = bus.DepartureTime.ToString("HH:mm");        }
 
         public override int ItemCount => busesList.Count;
-
-        void OnClick(BusAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(BusAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
     }
 
     public class BusAdapterViewHolder : RecyclerView.ViewHolder
@@ -94,8 +87,7 @@ namespace HSE_Transport1.Adapters
 
         public TextView timeTextView;
 
-        public BusAdapterViewHolder(View itemView, Action<BusAdapterClickEventArgs> clickListener,
-                            Action<BusAdapterClickEventArgs> longClickListener) : base(itemView)
+        public BusAdapterViewHolder(View itemView) : base(itemView)
         {
             occupancyLayout1 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout1);
             occupancyLayout2 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout2);
@@ -104,15 +96,6 @@ namespace HSE_Transport1.Adapters
             occupancyLayout5 = (RelativeLayout)itemView.FindViewById(Resource.Id.occupancy_layout5);
 
             timeTextView = (TextView)itemView.FindViewById(Resource.Id.timeTextView);
-
-            itemView.Click += (sender, e) => clickListener(new BusAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-            itemView.LongClick += (sender, e) => longClickListener(new BusAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
         }
-    }
-
-    public class BusAdapterClickEventArgs : EventArgs
-    {
-        public View View { get; set; }
-        public int Position { get; set; }
     }
 }
