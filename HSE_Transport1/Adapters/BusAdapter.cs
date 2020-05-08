@@ -12,16 +12,15 @@ namespace HSE_Transport1.Adapters
         public event EventHandler<BusAdapterClickEventArgs> ItemClick;
         public event EventHandler<BusAdapterClickEventArgs> ItemLongClick;
 
-        List<Bus> BusesList; 
+        List<Bus> busesList; 
 
         public BusAdapter(List<Bus> data)
         {
-            BusesList = data;
+            busesList = data;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-
             //Setting up layout 
             View itemView = null;
             itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.bus_row, parent, false);
@@ -32,7 +31,7 @@ namespace HSE_Transport1.Adapters
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
-            var bus = BusesList[position];
+            var bus = busesList[position];
 
             var holder = viewHolder as BusAdapterViewHolder;
 
@@ -79,7 +78,7 @@ namespace HSE_Transport1.Adapters
 
             holder.timeTextView.Text = bus.DepartureTime.ToString("HH:mm");        }
 
-        public override int ItemCount => BusesList.Count;
+        public override int ItemCount => busesList.Count;
 
         void OnClick(BusAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
         void OnLongClick(BusAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);

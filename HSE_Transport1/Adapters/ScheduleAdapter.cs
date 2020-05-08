@@ -12,11 +12,11 @@ namespace HSE_Transport1.Adapters
         TextView departureText;
         TextView arrivalText;
 
-        IList<Bus> arrivalBuses;
-        IList<Bus> departureBuses;
+        List<Bus> arrivalBuses;
+        List<Bus> departureBuses;
         Context context;
 
-        public ScheduleAdapter(Context context, IList<Bus> departureBuses, IList<Bus> arrivalBuses)
+        public ScheduleAdapter(Context context, List<Bus> departureBuses, List<Bus> arrivalBuses)
         {
             this.arrivalBuses = arrivalBuses;
             this.departureBuses = departureBuses;
