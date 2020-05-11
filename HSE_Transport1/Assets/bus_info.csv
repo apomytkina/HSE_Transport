@@ -1,5 +1,5 @@
 DepartureTime,DeparturePlace,ArrivalPlace,Occupancy,Day
-6:30 ,Dubki,Odintsovo,low,Monday-Friday
+6:30,Dubki,Odintsovo,low,Monday-Friday
 6:45,Dubki,Odintsovo,extra-low,Monday-Friday
 6:55,Dubki,Odintsovo,extra-low,Monday-Friday
 7:5,Dubki,Odintsovo,extra-low,Monday-Friday
@@ -257,7 +257,7 @@ DepartureTime,DeparturePlace,ArrivalPlace,Occupancy,Day
 21:15,Odintsovo,Dubki,extra-low,Saturday
 21:25,Odintsovo,Dubki,low,Saturday
 21:33,Odintsovo,Dubki,extra-low,Saturday
-21:46,Odintsovo,Dubki,medium,Saturday
+21:52,Odintsovo,Dubki,medium,Saturday
 22:08,Odintsovo,Dubki,extra-high,Saturday
 22:17,Odintsovo,Dubki,extra-low,Saturday
 22:30,Odintsovo,Dubki,low,Saturday

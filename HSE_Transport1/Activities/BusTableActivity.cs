@@ -259,14 +259,24 @@ namespace HSE_Transport1.Activities
         /// <param name="arrivalBuses"></param>
         void SetUpListView(int withoutTimeBuses, List<Bus> departureBuses, List<Bus> arrivalBuses)
         {
-            for (int i = 0; i < withoutTimeBuses; i++)
+            if (arrivalBuses.Where(x => x.DeparturePlace == "по прибытию").ToList().Count == 0)
             {
-                arrivalBuses.Insert(0, new Bus { DeparturePlace = "по прибытию" });
+                for (int i = 0; i < withoutTimeBuses; i++)
+                {
+                    arrivalBuses.Insert(0, new Bus { DeparturePlace = "по прибытию" });
+                }
             }
 
-            arrivalBuses.Insert(0, new Bus { DeparturePlace = "Одинцово" });
-            departureBuses.Insert(0, new Bus { DeparturePlace = "Дубки" });
+            if (arrivalBuses.Where(x => x.DeparturePlace == "Одинцово").ToList().Count == 0)
+            {
+                arrivalBuses.Insert(0, new Bus { DeparturePlace = "Одинцово" });
+            }
 
+            if (departureBuses.Where(x => x.DeparturePlace == "Дубки").ToList().Count == 0)
+            {
+                departureBuses.Insert(0, new Bus { DeparturePlace = "Дубки" });
+            }
+           
             scheduleListView.Adapter = new ScheduleAdapter(this, departureBuses, arrivalBuses);
         }
     }
